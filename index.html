@@ -274,9 +274,30 @@
         Se fizer sentido para você, agende uma reunião com nossa equipe e entenda quais imóveis têm
         mais aderência ao seu plano de investimento.
       </p>
-      <a href="#" class="cta-button" onclick="fbq('track','Lead')">Agendar uma call com a equipe</a>
+      <a href="#" class="cta-button" id="cta-lead">Agendar uma call com a equipe</a>
     </section>
   </div>
 
+  <script>
+    (function () {
+      var STORAGE_KEY = 'lead_fired';
+
+      function generateEventId() {
+        return 'lead_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
+      }
+
+      document.getElementById('cta-lead').addEventListener('click', function (e) {
+        if (sessionStorage.getItem(STORAGE_KEY)) return;
+
+        var eventId = generateEventId();
+        sessionStorage.setItem(STORAGE_KEY, eventId);
+
+        fbq('track', 'Lead', {}, { eventID: eventId });
+
+        // eventId disponível para enviar à API de Conversões server-side:
+        // fetch('/api/conversions', { method: 'POST', body: JSON.stringify({ eventId: eventId }) });
+      });
+    })();
+  </script>
 </body>
 </html>
