@@ -286,16 +286,26 @@
         return 'lead_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
       }
 
-      document.getElementById('cta-lead').addEventListener('click', function (e) {
+      function sendCAPI(eventId) {
+        fetch('/.netlify/functions/conversions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            eventId: eventId,
+            userAgent: navigator.userAgent,
+            eventSourceUrl: window.location.href,
+          }),
+        }).catch(function () {});
+      }
+
+      document.getElementById('cta-lead').addEventListener('click', function () {
         if (sessionStorage.getItem(STORAGE_KEY)) return;
 
         var eventId = generateEventId();
         sessionStorage.setItem(STORAGE_KEY, eventId);
 
         fbq('track', 'Lead', {}, { eventID: eventId });
-
-        // eventId disponível para enviar à API de Conversões server-side:
-        // fetch('/api/conversions', { method: 'POST', body: JSON.stringify({ eventId: eventId }) });
+        sendCAPI(eventId);
       });
     })();
   </script>
