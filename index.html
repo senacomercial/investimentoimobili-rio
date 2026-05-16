@@ -235,6 +235,12 @@
   </div>
 
   <div class="container">
+    <div style="text-align:center;padding:0 24px 56px;">
+      <a href="#" class="cta-button" id="cta-lead-2">Agendar uma call com a equipe</a>
+    </div>
+  </div>
+
+  <div class="container">
     <div class="divider"></div>
     <section class="content">
       <p>
@@ -281,14 +287,16 @@
         }).catch(function () {});
       }
 
-      document.getElementById('cta-lead').addEventListener('click', function () {
-        if (sessionStorage.getItem(STORAGE_KEY)) return;
+      ['cta-lead', 'cta-lead-2'].forEach(function (id) {
+        document.getElementById(id).addEventListener('click', function () {
+          if (sessionStorage.getItem(STORAGE_KEY)) return;
 
-        var eventId = generateEventId();
-        sessionStorage.setItem(STORAGE_KEY, eventId);
+          var eventId = generateEventId();
+          sessionStorage.setItem(STORAGE_KEY, eventId);
 
-        fbq('track', 'Lead', {}, { eventID: eventId });
-        sendCAPI(eventId);
+          fbq('track', 'Lead', {}, { eventID: eventId });
+          sendCAPI(eventId);
+        });
       });
     })();
   </script>
