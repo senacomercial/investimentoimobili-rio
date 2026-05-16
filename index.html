@@ -190,6 +190,20 @@
       }
     }
   </style>
+
+  <!-- Meta Pixel -->
+  <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init','2667374110326634');
+    fbq('track','PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=2667374110326634&ev=PageView&noscript=1"/></noscript>
+  <!-- End Meta Pixel -->
 </head>
 <body>
 
@@ -243,9 +257,40 @@
         Se fizer sentido para você, agende uma reunião com nossa equipe e entenda quais imóveis têm
         mais aderência ao seu plano de investimento.
       </p>
-      <a href="#" class="cta-button">Agendar uma call com a equipe</a>
+      <a href="#" class="cta-button" id="cta-lead">Agendar uma call com a equipe</a>
     </section>
   </div>
 
+  <script>
+    (function () {
+      var STORAGE_KEY = 'lead_fired';
+
+      function generateEventId() {
+        return 'lead_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
+      }
+
+      function sendCAPI(eventId) {
+        fetch('/.netlify/functions/conversions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            eventId: eventId,
+            userAgent: navigator.userAgent,
+            eventSourceUrl: window.location.href,
+          }),
+        }).catch(function () {});
+      }
+
+      document.getElementById('cta-lead').addEventListener('click', function () {
+        if (sessionStorage.getItem(STORAGE_KEY)) return;
+
+        var eventId = generateEventId();
+        sessionStorage.setItem(STORAGE_KEY, eventId);
+
+        fbq('track', 'Lead', {}, { eventID: eventId });
+        sendCAPI(eventId);
+      });
+    })();
+  </script>
 </body>
 </html>
